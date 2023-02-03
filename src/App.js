@@ -2,16 +2,18 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 import Dropdown from "react-bootstrap/Dropdown";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Country from "./Country";
 
 // TODO:
 // 1. Get all data from API
-// 2. Droptable for all countires with flags, no need for searchbar, only scrollable list
-// 3. When country is clicked open new page where is given important information (capital, population, etc.)
-//  LÄHETÄ TÄMÄ VALMIINA ilkka@beanbakers.fi ja peter@beanbakers.fi
+// 2. Dropdown for all countires with flags, no need for searchbar, only scrollable list
+// 3. When country is clicked open important information (capital, population, etc.)
+// All done!
 
 function App() {
   //States
   const [countries, setCountries] = useState([]);
+  const [country, setCountry] = useState({});
 
   //API
   const URL = "https://restcountries.com/v3.1/";
@@ -27,19 +29,19 @@ function App() {
       .then((data) => {
         data.forEach((element) => {
           fetchedCountries.push(element.name.common);
-          //console.log(element.name.common);
         });
       });
-    console.log(fetchedCountries);
     setCountries(fetchedCountries);
   }
 
-  async function fetchCountry(country) {
-    await fetch(URL + "name/" + country)
+  async function fetchCountry(props) {
+    let fetchedCountry = {};
+    await fetch(URL + "name/" + props)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
+        fetchedCountry = data[0];
       });
+    setCountry(fetchedCountry);
   }
 
   return (
@@ -52,7 +54,12 @@ function App() {
 
           <Dropdown.Menu>
             {countries.map((country) => (
-              <Dropdown.Item key={country} href="#/${asdasd}">
+              <Dropdown.Item
+                key={country}
+                onClick={() =>
+                  fetchCountry(country)
+                } /*Make onClick to use fetchCountry(country) function*/
+              >
                 {country}
               </Dropdown.Item>
             ))}
@@ -60,7 +67,19 @@ function App() {
         </Dropdown>
       </header>
       <div className="App-main">
-        <p>Tähän tulee valitun maan tiedot</p>
+        {Object.keys(country).length === 0 ? (
+          <Country />
+        ) : (
+          <Country
+            flag={country.flags.png}
+            name={country.name.common}
+            region={country.region}
+            capital={country.capital}
+            population={country.population}
+            timezones={country.timezones}
+            coatOfArms={country.coatOfArms.png}
+          />
+        )}
       </div>
     </div>
   );
