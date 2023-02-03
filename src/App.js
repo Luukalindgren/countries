@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import Dropdown from "react-bootstrap/Dropdown";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 // TODO:
 // 1. Get all data from API
@@ -15,32 +16,51 @@ function App() {
   //API
   const URL = "https://restcountries.com/v3.1/";
 
-  async function fetchAllCountries() {
-    const fetchedCountries = [];
-    const response = await fetch(URL + "all")
-      .then((response) => response.json())
-      .then((data) => {
-        // fetchedCountries = data.map((country) =>
-        // )
-        console.log(data);
-      });
-    setCountries(fetchedCountries);
-  }
-
   useEffect(() => {
     fetchAllCountries();
   }, []);
 
+  async function fetchAllCountries() {
+    const fetchedCountries = [];
+    await fetch(URL + "all")
+      .then((response) => response.json())
+      .then((data) => {
+        data.forEach((element) => {
+          fetchedCountries.push(element.name.common);
+          //console.log(element.name.common);
+        });
+      });
+    console.log(fetchedCountries);
+    setCountries(fetchedCountries);
+  }
+
+  async function fetchCountry(country) {
+    await fetch(URL + "name/" + country)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      });
+  }
+
   return (
     <div className="App">
-      <div className="App-main">
+      <header className="App-header">
         <Dropdown className="App-main-countries">
           <Dropdown.Toggle variant="success" id="dropdown-basic">
             Countries
           </Dropdown.Toggle>
 
-          <Dropdown.Menu>{/* MAP ALL COUNTRIES FROM API HERE */}</Dropdown.Menu>
+          <Dropdown.Menu>
+            {countries.map((country) => (
+              <Dropdown.Item key={country} href="#/${asdasd}">
+                {country}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
         </Dropdown>
+      </header>
+      <div className="App-main">
+        <p>Tähän tulee valitun maan tiedot</p>
       </div>
     </div>
   );
