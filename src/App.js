@@ -56,9 +56,7 @@ function App() {
             {countries.map((country) => (
               <Dropdown.Item
                 key={country}
-                onClick={() =>
-                  fetchCountry(country)
-                } /*Make onClick to use fetchCountry(country) function*/
+                onClick={() => fetchCountry(country)}
               >
                 {country}
               </Dropdown.Item>
